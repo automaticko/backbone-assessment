@@ -21,6 +21,6 @@ class ZipCode extends Model
 
     public function settlements(): HasMany
     {
-        return $this->hasMany(Settlement::class);
+        return $this->hasMany(Settlement::class)->orderBy('key');
     }
 }
