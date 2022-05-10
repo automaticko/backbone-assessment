@@ -14,7 +14,7 @@ class ShowResource extends JsonResource
 {
     public static $wrap = null;
 
-    public function __construct($resource)
+    public function __construct(LocationInterface $resource)
     {
         parent::__construct($resource);
     }
