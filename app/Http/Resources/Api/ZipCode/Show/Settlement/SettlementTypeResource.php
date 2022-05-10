@@ -2,13 +2,13 @@
 
 namespace App\Http\Resources\Api\ZipCode\Show\Settlement;
 
-use App\Services\Place\Providers\SettlementTypeInterface;
+use App\Models\Settlement;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @property SettlementTypeInterface $resource */
+/** @property Settlement $resource */
 class SettlementTypeResource extends JsonResource
 {
-    public function __construct(SettlementTypeInterface $resource)
+    public function __construct(Settlement $resource)
     {
         parent::__construct($resource);
     }
@@ -16,7 +16,7 @@ class SettlementTypeResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'name' => $this->resource->name(),
+            'name' => $this->resource->type,
         ];
     }
 

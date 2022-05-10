@@ -3,7 +3,7 @@
 namespace Tests\Unit\Http\Resources\Api\ZipCode\Show;
 
 use App\Http\Resources\Api\ZipCode\Show\FederalEntityResource;
-use App\Services\Place\Providers\FederalEntityInterface;
+use App\Models\ZipCode;
 use Mockery;
 use Tests\TestCase;
 
@@ -12,10 +12,16 @@ class FederalEntityResourceTest extends TestCase
     /** @test */
     public function it_has_correct_fields()
     {
-        $federalEntity = Mockery::mock(FederalEntityInterface::class);
-        $federalEntity->shouldReceive('key')->withNoArgs()->once()->andReturn($key = 1);
-        $federalEntity->shouldReceive('name')->withNoArgs()->once()->andReturn($name = 'A name');
-        $federalEntity->shouldReceive('code')->withNoArgs()->once()->andReturn($code = null);
+        $federalEntity = Mockery::mock(ZipCode::class);
+        $federalEntity->shouldReceive('getAttribute')->withArgs(['federal_entity_key'])->once()->andReturn($key = 1);
+        $federalEntity->shouldReceive('getAttribute')
+            ->withArgs(['federal_entity_name'])
+            ->once()
+            ->andReturn($name = 'A name');
+        $federalEntity->shouldReceive('getAttribute')
+            ->withArgs(['federal_entity_code'])
+            ->once()
+            ->andReturn($code = null);
 
         $resource = new FederalEntityResource($federalEntity);
 

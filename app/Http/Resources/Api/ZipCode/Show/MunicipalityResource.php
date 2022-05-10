@@ -2,13 +2,13 @@
 
 namespace App\Http\Resources\Api\ZipCode\Show;
 
-use App\Services\Place\Providers\MunicipalityInterface;
+use App\Models\ZipCode;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @property MunicipalityInterface $resource */
+/** @property ZipCode $resource */
 class MunicipalityResource extends JsonResource
 {
-    public function __construct(MunicipalityInterface $resource)
+    public function __construct(ZipCode $resource)
     {
         parent::__construct($resource);
     }
@@ -16,8 +16,8 @@ class MunicipalityResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'key'  => $this->resource->key(),
-            'name' => $this->resource->name(),
+            'key'  => $this->resource->municipality_key,
+            'name' => $this->resource->municipality_name,
         ];
     }
 

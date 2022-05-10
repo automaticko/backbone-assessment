@@ -6,11 +6,9 @@ use App\Http\Resources\Api\ZipCode\Show\FederalEntityResource;
 use App\Http\Resources\Api\ZipCode\Show\MunicipalityResource;
 use App\Http\Resources\Api\ZipCode\Show\SettlementResource;
 use App\Http\Resources\Api\ZipCode\ShowResource;
-use App\Services\Place\Providers\FederalEntityInterface;
-use App\Services\Place\Providers\LocationInterface;
-use App\Services\Place\Providers\MunicipalityInterface;
-use App\Services\Place\Providers\SettlementsInterface;
-use Illuminate\Support\Collection;
+use App\Models\Settlement;
+use App\Models\ZipCode;
+use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use Tests\TestCase;
 
@@ -19,88 +17,39 @@ class ShowResourceTest extends TestCase
     /** @test */
     public function it_has_correct_fields()
     {
-        $settlements = $this->settlements();
 
-        $federalEntity = $this->federalEntity();
-        $municipality  = $this->municipality();
+        $zipCode = Mockery::mock(ZipCode::class);
+        $zipCode->shouldReceive('getAttribute')->withArgs(['zip_code'])->once()->andReturn($code = '01000');
 
-        $show = Mockery::mock(LocationInterface::class);
-        $show->shouldReceive('zipCode')->withNoArgs()->once()->andReturn($zipCode = '01000');
-        $show->shouldReceive('locality')->withNoArgs()->once()->andReturn($locality = 'Locality');
-        $show->shouldReceive('federalEntity')->withNoArgs()->once()->andReturn($federalEntity);
-        $show->shouldReceive('municipality')->withNoArgs()->once()->andReturn($municipality);
-        $show->shouldReceive('settlements')->withNoArgs()->once()->andReturn($settlements);
+        $settlement = Mockery::mock(Settlement::class);
+        $settlement->shouldReceive('getAttribute')->withArgs(['key'])->once()->andReturn(1);
+        $settlement->shouldReceive('getAttribute')->withArgs(['name'])->once()->andReturn('');
+        $settlement->shouldReceive('getAttribute')->withArgs(['zone'])->once()->andReturn('');
+        $settlement->shouldReceive('getAttribute')->withArgs(['type'])->once()->andReturn('');
 
-        $resource = new ShowResource($show);
+        $settlements = Collection::make([$settlement]);
+
+        $zipCode->shouldReceive('getAttribute')->withArgs(['locality'])->once()->andReturn($locality = 'Locality');
+        $zipCode->shouldReceive('getAttribute')->withArgs(['federal_entity_key'])->once()->andReturn(1);
+        $zipCode->shouldReceive('getAttribute')->withArgs(['federal_entity_name'])->once()->andReturn('');
+        $zipCode->shouldReceive('getAttribute')->withArgs(['federal_entity_code'])->once()->andReturn(null);
+        $zipCode->shouldReceive('getAttribute')->withArgs(['settlements'])->once()->andReturn($settlements);
+        $zipCode->shouldReceive('getAttribute')->withArgs(['municipality_key'])->once()->andReturn(1);
+        $zipCode->shouldReceive('getAttribute')->withArgs(['municipality_name'])->once()->andReturn('');
+
+        $resource = new ShowResource($zipCode);
 
         $expected = [
-            'zip_code'       => $zipCode,
+            'zip_code'       => $code,
             'locality'       => $locality,
-            'federal_entity' => new FederalEntityResource($federalEntity),
-            'municipality'   => new MunicipalityResource($municipality),
-            'settlements'    => SettlementResource::collection($settlements->items()),
+            'federal_entity' => new FederalEntityResource($zipCode),
+            'municipality'   => new MunicipalityResource($zipCode),
+            'settlements'    => SettlementResource::collection($settlements),
         ];
 
         $actual = $resource->resolve();
 
         $this->assertEquals($expected, $actual);
         $this->assertValidSchema(ShowResource::jsonSchema(), json_decode(json_encode($actual)));
-    }
-
-    private function federalEntity(): FederalEntityInterface
-    {
-        return new class(Collection::make([])) implements FederalEntityInterface {
-            public function __construct(Collection $raw)
-            {
-            }
-
-            public function key(): int
-            {
-                return 1;
-            }
-
-            public function name(): string
-            {
-                return '';
-            }
-
-            public function code(): ?string
-            {
-                return null;
-            }
-        };
-    }
-
-    private function settlements(): SettlementsInterface
-    {
-        return new class(Collection::make([])) implements SettlementsInterface {
-            public function __construct(Collection $raw)
-            {
-            }
-
-            public function items(): Collection
-            {
-                return Collection::make([]);
-            }
-        };
-    }
-
-    private function municipality(): MunicipalityInterface
-    {
-        return new class(Collection::make([])) implements MunicipalityInterface {
-            public function __construct(Collection $raw)
-            {
-            }
-
-            public function key(): int
-            {
-                return 1;
-            }
-
-            public function name(): string
-            {
-                return '';
-            }
-        };
     }
 }

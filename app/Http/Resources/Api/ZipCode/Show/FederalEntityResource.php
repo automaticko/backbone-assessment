@@ -2,13 +2,13 @@
 
 namespace App\Http\Resources\Api\ZipCode\Show;
 
-use App\Services\Place\Providers\FederalEntityInterface;
+use App\Models\ZipCode;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @property FederalEntityInterface $resource */
+/** @property ZipCode $resource */
 class FederalEntityResource extends JsonResource
 {
-    public function __construct(FederalEntityInterface $resource)
+    public function __construct(ZipCode $resource)
     {
         parent::__construct($resource);
     }
@@ -16,9 +16,9 @@ class FederalEntityResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'key'  => $this->resource->key(),
-            'name' => $this->resource->name(),
-            'code' => $this->resource->code(),
+            'key'  => $this->resource->federal_entity_key,
+            'name' => $this->resource->federal_entity_name,
+            'code' => $this->resource->federal_entity_code,
         ];
     }
 

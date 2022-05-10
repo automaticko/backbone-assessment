@@ -19,6 +19,11 @@ class ZipCode extends Model
     public    $timestamps = false;
     protected $guarded    = false;
 
+    public function getRouteKeyName()
+    {
+        return 'zip_code';
+    }
+
     public function settlements(): HasMany
     {
         return $this->hasMany(Settlement::class);

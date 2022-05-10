@@ -3,7 +3,7 @@
 namespace Tests\Unit\Http\Resources\Api\ZipCode\Show\Settlement;
 
 use App\Http\Resources\Api\ZipCode\Show\Settlement\SettlementTypeResource;
-use App\Services\Place\Providers\SettlementTypeInterface;
+use App\Models\Settlement;
 use Mockery;
 use Tests\TestCase;
 
@@ -12,10 +12,10 @@ class SettlementTypeResourceTest extends TestCase
     /** @test */
     public function it_has_correct_fields()
     {
-        $settlementType = Mockery::mock(SettlementTypeInterface::class);
-        $settlementType->shouldReceive('name')->withNoArgs()->once()->andReturn($name = 'A name');
+        $settlement = Mockery::mock(Settlement::class);
+        $settlement->shouldReceive('getAttribute')->withArgs(['type'])->once()->andReturn($name = 'A name');
 
-        $resource = new SettlementTypeResource($settlementType);
+        $resource = new SettlementTypeResource($settlement);
 
         $expected = [
             'name' => $name,

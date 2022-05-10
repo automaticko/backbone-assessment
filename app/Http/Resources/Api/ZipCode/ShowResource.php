@@ -5,16 +5,16 @@ namespace App\Http\Resources\Api\ZipCode;
 use App\Http\Resources\Api\ZipCode\Show\FederalEntityResource;
 use App\Http\Resources\Api\ZipCode\Show\MunicipalityResource;
 use App\Http\Resources\Api\ZipCode\Show\SettlementResource;
-use App\Services\Place\Providers\LocationInterface;
+use App\Models\ZipCode;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
 
-/** @property LocationInterface $resource */
+/** @property ZipCode $resource */
 class ShowResource extends JsonResource
 {
     public static $wrap = null;
 
-    public function __construct($resource)
+    public function __construct(ZipCode $resource)
     {
         parent::__construct($resource);
     }
@@ -22,12 +22,11 @@ class ShowResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'zip_code'       => $this->resource->zipCode(),
-            'locality'       => $this->resource->locality(),
-            'federal_entity' => App::make(FederalEntityResource::class,
-                ['resource' => $this->resource->federalEntity()]),
-            'settlements'    => SettlementResource::collection($this->resource->settlements()->items()),
-            'municipality'   => App::make(MunicipalityResource::class, ['resource' => $this->resource->municipality()]),
+            'zip_code'       => $this->resource->zip_code,
+            'locality'       => $this->resource->locality,
+            'federal_entity' => App::make(FederalEntityResource::class, ['resource' => $this->resource]),
+            'settlements'    => SettlementResource::collection($this->resource->settlements),
+            'municipality'   => App::make(MunicipalityResource::class, ['resource' => $this->resource]),
         ];
     }
 

@@ -1,15 +1,10 @@
 ## Backbone Assessment
-<b>Warning: This is a complex way to solve the problem. For a simple one, check the `simpler` branch.</b>
+<b>Warning: This is a simple way to solve the problem. For a more complex one, check the `master` branch.</b>
 
-This solution considers multiple providers, one of these, being database but considering backbone api as a providers and allowing extension
+This solution considers database as the source of data.
 
-A `place` service has been created. This services returns location data provided a zip code.
-The data source can be defined via a config `place.provider`. Possible providers are `database`, `backbone` and `fake`. The `fake` providers is meant for testing purposes.
+An implicit binding was used to instance a record based on a zip code.
+In order to magically work the getRouteKeyName has been modified in zipCode model.
 
-The service structures the data in a way that is easily consumed by the resources that use them.
-
-The controller only responsibility is to instance the service, obtain the location, pass it to the a resource and return said resource.
-
-The resource and inner resources are responsible for creating the json structure required.
-
-Almost all in new classes was tested. 
+Similar to the complex approach, the controller only takes the zip code, gives it to the resource for this to create the right structure
+and returns said resource.

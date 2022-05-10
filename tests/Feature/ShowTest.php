@@ -5,8 +5,8 @@ namespace Tests\Feature;
 use App\Constants\RouteNames;
 use App\Http\Controllers\Api\ZipCodeController;
 use App\Http\Resources\Api\ZipCode\ShowResource;
+use App\Models\ZipCode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
@@ -16,18 +16,16 @@ class ShowTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Config::set('place.provider', 'fake');
-    }
-
     private string $routeName = RouteNames::ZIP_CODE;
 
     /** @test */
     public function it_displays_a_location()
     {
-        $route = URL::route($this->routeName, '01000');
+        ZipCode::factory()->create([
+            'zip_code' => $code = '01000',
+        ]);
+
+        $route = URL::route($this->routeName, $code);
 
         $response = $this->get($route);
 
